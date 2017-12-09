@@ -1,23 +1,22 @@
-def lsz42(plaintext):
+def lsz42(plaintext, key):
     # international telepgrah alphabet code
-    ltrs = 'E\nA SIU\rDRJNFCKTZLWHYPQOBG#MXV@'
+    ltrs = ' E\nA SIU\rDRJNFCKTZLWHYPQOBG#MXV@'
     # fig = "3\n- '87\r~4^,!:(5+)2$6019?&#./;@"
     # ita2 = {'': 0}
     # ita2.update(dict(zip(ltr, range(1, 32))))
     # ita2.update(dict(zip(fig, range(1, 32))))
-    
+
     # initialize all the cams on the wheels to 0
     # all wheels start at position 0
     # k / chi wheels
-    k = [[False] * 41, [False] * 31, [False] * 29, [False] * 26, [False] * 23]
-    k[0][0] = True
-    kPos = [0,0,0,0,0]
-    # s / psi wheels
-    s = [[False] * 43, [False] * 47, [False] * 51, [False] * 53, [False] * 59]
-    sPos = [0,0,0,0,0]
-    # m / motor wheels
-    m = [[False] * 61, [False] * 37]
-    mPos = [0, 0]
+    boolify = lambda x: list(map(lambda c: bool(int(c)), x.split(' ')))
+    k = list(map(boolify, key[:5]))
+    s = list(map(boolify, key[5:10]))
+    m = list(map(boolify, key[10:12]))
+    kPos = boolify(key[12])
+    sPos = boolify(key[13])
+    mPos = boolify(key[14])
+    
     cipherText = ''
     plaintext = plaintext.upper()
     for letter in plaintext:
@@ -48,7 +47,26 @@ def lsz42(plaintext):
         cipherText += (ltrs[encryptedLetter])
     return cipherText
 
-print(lsz42("abc"))
-print(lsz42(lsz42("abc")))
+k = ["0 0 0 1 1 1 1 0 0 0 0 1 1 0 0 0 0 1 0 1 1 0 0 1 0 0 1 1 0 1 0 1 1 0 1 0 1 1 1 1 0",
+'1 1 0 0 1 1 1 0 1 1 0 0 0 1 0 1 0 1 1 0 0 0 1 0 0 0 0 1 1 1 0',
+'0 0 1 1 1 0 1 1 0 0 1 0 0 0 0 1 1 1 0 0 1 1 0 1 1 0 0 1 1',
+'0 0 1 1 0 0 1 0 1 1 0 0 1 0 0 1 1 0 0 1 0 0 1 1 1 1',
+'0 1 0 0 0 1 0 1 1 0 0 1 0 0 0 1 1 1 0 1 1 1 0']
 
+s = ['0 0 1 0 1 0 1 0 1 0 1 0 0 1 0 0 1 0 1 1 0 1 1 0 1 0 1 0 0 1 1 0 1 1 1 0 0 1 1 1 0 0 0',
+'0 0 1 0 1 1 0 1 0 1 0 1 0 1 0 1 0 1 1 0 0 1 1 0 1 0 0 1 0 1 1 1 1 0 0 0 0 0 1 1 1 0 0 1 0 1 1',
+'1 0 1 0 1 0 1 0 1 0 1 0 1 0 0 1 0 0 1 1 0 1 0 1 0 1 1 1 1 0 0 0 0 1 1 1 0 0 0 1 1 1 0 1 1 0 0 1 0 0 1',
+'1 0 1 0 0 1 1 0 1 0 1 0 1 0 1 0 1 0 1 1 0 1 0 0 0 0 1 1 0 0 1 1 0 0 1 1 0 1 1 1 1 1 0 1 0 0 1 0 0 0 0 1 0',
+'0 1 0 1 0 1 0 1 0 1 1 0 0 0 1 0 1 0 0 1 1 1 0 1 1 1 1 0 1 1 0 1 0 0 0 0 1 0 0 0 1 0 0 1 1 0 1 1 0 0 1 1 0 0 1 0 1 0 1']
+
+m = ['1 1 1 0 1 0 1 1 0 0 1 1 0 0 1 1 0 0 0 1 1 1 1 0 1 0 1 1 0 1 1 0 0 0 1 1 0 0 0 0 1 1 1 1 0 1 1 0 0 1 1 0 0 0 1 1 0 0 0 0 1',
+'1 0 1 1 1 0 1 0 1 0 1 0 1 0 0 1 0 1 0 1 1 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0']
+kPos = ['1 1 1 1 1']
+sPos = ['1 1 1 1 1']
+mPos = ['1 1']
+
+key = k + s + m + kPos + sPos + mPos
+
+print(lsz42("abc", key))
+print(lsz42(lsz42("abc", key), key))
 
