@@ -6,6 +6,5 @@ def vigenere(text, password):
     cipherText = list(map(lambda i: caesar(text[i], ord(password[i % len(password)].lower()) - 97), range(len(text))))
     return ''.join(cipherText)
 
-
 print(vigenere('textt', 'oink'))
 
