@@ -11,6 +11,11 @@ def lsz40(plaintext, key):
     kPos = intify(key[12].split(' '))
     sPos = intify(key[13].split(' '))
     mPos = intify(key[14].split(' '))
+    
+    kPos = list(map(lambda x: x - 1, kPos))
+    sPos = list(map(lambda x: x - 1, sPos))
+    mPos = list(map(lambda x: x - 1, mPos))
+
 
     cipherText = ''
     plaintext = plaintext.upper()
@@ -30,6 +35,7 @@ def lsz40(plaintext, key):
         if (m[1][mPos[1]]):
             for i in range(5):
                 sPos[i] = (sPos[i] + 1) % len(s[i])
+
         if (m[0][mPos[0]]):
             mPos[1] = (mPos[1] + 1) % len(m[1])
 
