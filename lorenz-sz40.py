@@ -1,4 +1,4 @@
-def lsz40(plaintext, key):
+def lsz40(plaintext, key, limitationSetting):
     # international telepgrah alphabet code
     ita2 = [24, 19, 14, 18, 16, 22, 11, 5, 12, 26, 30, 9, 7, 6, 3, 13, 29, 10, 20, 1, 28, 15, 25, 23, 21, 17, 2, 8, 31, 4, 27, 0]
     ltrs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ34-.+/9 85"
@@ -14,6 +14,7 @@ def lsz40(plaintext, key):
     mPos = intify(key[14].split(' '))
     
     cipherText = ''
+
     plaintext = plaintext.upper()
     for letter in plaintext:
         # each of the k wheels operates on a single bit of the plaintext
@@ -26,9 +27,12 @@ def lsz40(plaintext, key):
         # first XOR the letter with the k wheels, then with the s wheels
         letterCode = ita2[ltrs.index(letter)]
         encryptedLetter = letterCode ^ kWheelsCode ^ sWheelsCode
+        if limitationSetting == "none": limitation = True
+        elif limitationSetting == "k2 one back":
+            limitation = k[1][(kPos[1] - 1) % len(k[1])]
 
         # turn the wheels
-        if (m[1][mPos[1]]):
+        if (m[1][mPos[1]] or not limitation):
             for i in range(5):
                 sPos[i] = (sPos[i] + 1) % len(s[i])
 
@@ -50,7 +54,6 @@ sPos1 = ['20 38 38 33 46']
 mPos1 = ['21 14']
 key1 = key1 + kPos1 + sPos1 + mPos1
 text1 = "HELLO.WORLD"
-
-print(lsz40(text1, key1))
-print(lsz40(lsz40(text1, key1), key1))
+text1 = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+print(lsz40(text1, key1, "k2 one back"))
 
