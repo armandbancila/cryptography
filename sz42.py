@@ -1,5 +1,5 @@
 # sz42b without the p5 addon
-# couldn't find on the internet info about the behavior of p5 lim when there was no "previous" plaintext
+# couldn't find on the internet info about the behavior of p5 lim when there was no previous plaintext
 def sz42(plaintext, key, lim = ""):
     # international telepgrah alphabet code
     # the index of each letter is its ITA2 code value
@@ -9,59 +9,55 @@ def sz42(plaintext, key, lim = ""):
     boolify = lambda x: list(map(lambda y: list(map(lambda c: bool(int(c)), y)), x))
     intify = lambda x: list(map(int, x))
     keylines = key.split('\n')
-    chi = boolify(keylines[:5])
-    psi = boolify(keylines[5:10])
-    motor = boolify(keylines[10:12])
-    chiPos = intify(keylines[12].split(' '))
-    psiPos = intify(keylines[13].split(' '))
+    chi =      boolify(keylines[:5])
+    psi =      boolify(keylines[5:10])
+    motor =    boolify(keylines[10:12])
+    chiPos =   intify(keylines[12].split(' '))
+    psiPos =   intify(keylines[13].split(' '))
     motorPos = intify(keylines[14].split(' '))
 
     output = []
     for letter in plaintext:
-        # each of the chi wheels operates on a single bit of the plaintext
+        # each of the chi and psi wheels operates on a single bit of the plaintext
         # for the sake of simplicity, treat the chi and psi wheels as 2 binary numbers
         chiCode = psiCode = 0
         for i in range(5):
             chiCode = (chiCode << 1) + chi[i][chiPos[i]]
             psiCode = (psiCode << 1) + psi[i][psiPos[i]]
-        letterCode = ltrs.index(letter) if letter in ltrs else figs.index(letter)
+        # get the ITA2 code of the current letter
+        letterCode = ltrs.index(letter) if letter in ltrs else (figs.index(letter) if letter in figs else 0)
         # first XOR the letter with the chi wheels, then with the psi wheels
         encryptedLetter = letterCode ^ chiCode ^ psiCode
 
         # calculate the limitation
         basicMotor = motor[1][motorPos[1]]
-        if lim == "chi2":
-            limitation = chi[1][(chiPos[1] - 1) % len(chi[1])]
-        elif lim == "psi1":
-            limitation = chi[1][(chiPos[1] - 1) % len(chi(1))] ^ psi[0][(psiPos[0] - 1) % len(psi[0])]
-        else: limitation = True
+        if lim == "chi2":   limitation = chi[1][(chiPos[1] - 1) % len(chi[1])]
+        elif lim == "psi1": limitation = chi[1][(chiPos[1] - 1) % len(chi(1))] ^ psi[0][(psiPos[0] - 1) % len(psi[0])]
+        else:               limitation = True
         totalMotor = basicMotor or not limitation
 
-        # advance chi wheels
+        # move chi wheels
         for i in range(5): chiPos[i] = (chiPos[i] + 1) % len(chi[i])
 
-        # advance the motor wheels
-        # m2
+        # move the motor wheels
+        # move motor 2
         if (motor[0][motorPos[0]]): motorPos[1] = (motorPos[1] + 1) % len(motor[1])
-        # m1
+        # move motor 1
         motorPos[0] = (motorPos[0] + 1) % len(motor[0])
 
-        # advance the psi wheels
+        # move the psi wheels
         if (totalMotor):
-            for i in range(5):
-                psiPos[i] = (psiPos[i] + 1) % len(psi[i])
+            for i in range(5): psiPos[i] = (psiPos[i] + 1) % len(psi[i])
 
         output += [encryptedLetter]
 
     shift = False
     cipherText = ''
     for code in output:
-        if code == 31:
-            shift = False
-        elif code == 27:
-            shift = True
+        if code == 31:   shift = False
+        elif code == 27: shift = True
         if shift: cipherText += figs[code]
-        else: cipherText += ltrs[code]
+        else:     cipherText += ltrs[code]
     return cipherText
 
 key1 = """00011110000110000101100100110101101011110
