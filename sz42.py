@@ -1,11 +1,10 @@
 # sz42b without the p5 addon
-# couldn't find on the internet info about the behavior of p5 lim when there was no previous plaintext
 def sz42(plaintext, key, lim = ""):
     # international telepgrah alphabet code
     # the index of each letter is its ITA2 code value
     ltrs = "iTrO_HNMnLRGIPCVEZDBSYFXAWJ<UQK>"
     figs = "i5r9_h,.n)4g80:=3+d?'6f/-2j<71(>"
-    
+
     boolify = lambda x: list(map(lambda y: list(map(lambda c: bool(int(c)), y)), x))
     intify = lambda x: list(map(int, x))
     keylines = key.split('\n')
