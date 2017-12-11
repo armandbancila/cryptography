@@ -23,13 +23,11 @@ def lsz40(plaintext, key, limitationSetting = "none"):
             psiCode = (psiCode << 1) + psi[i][psiPos[i]]
 
         # first XOR the letter with the chi wheels, then with the psi wheels
-        print(letter)
 
         if letter in ltrs: letterCode = ltrs.index(letter)
         else: letterCode = figs.index(letter)
-
         encryptedLetter = letterCode ^ chiCode ^ psiCode
-        
+
         chi2Back = chi[1][(chiPos[1] - 1) % len(chi[1])]
         # calculate the limitation
         basicMotor = motor[1][motorPos[1]]
