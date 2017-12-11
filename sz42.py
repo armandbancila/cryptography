@@ -1,18 +1,20 @@
-def sz42(plaintext, key, limitationSetting = "none"):
+# sz42b without the p5 addon
+# couldn't find on the internet info about the behavior of p5 lim when there was no "previous" plaintext
+def sz42(plaintext, key, lim = ""):
     # international telepgrah alphabet code
+    # the index of each letter is its ITA2 code value
     ltrs = "iTrO_HNMnLRGIPCVEZDBSYFXAWJ<UQK>"
     figs = "i5r9_h,.n)4g80:=3+d?'6f/-2j<71(>"
     
-    key = key.split('\n')
-    boolify = lambda x: list(map(lambda c: bool(int(c)), x))
-    chi = list(map(boolify, key[:5]))
-    psi = list(map(boolify, key[5:10]))
-    motor = list(map(boolify, key[10:12]))
-
+    boolify = lambda x: list(map(lambda y: list(map(lambda c: bool(int(c)), y)), x))
     intify = lambda x: list(map(int, x))
-    chiPos = intify(key[12].split(' '))
-    psiPos = intify(key[13].split(' '))
-    motorPos = intify(key[14].split(' '))
+    keylines = key.split('\n')
+    chi = boolify(keylines[:5])
+    psi = boolify(keylines[5:10])
+    motor = boolify(keylines[10:12])
+    chiPos = intify(keylines[12].split(' '))
+    psiPos = intify(keylines[13].split(' '))
+    motorPos = intify(keylines[14].split(' '))
 
     output = []
     for letter in plaintext:
@@ -22,25 +24,20 @@ def sz42(plaintext, key, limitationSetting = "none"):
         for i in range(5):
             chiCode = (chiCode << 1) + chi[i][chiPos[i]]
             psiCode = (psiCode << 1) + psi[i][psiPos[i]]
-
+        letterCode = ltrs.index(letter) if letter in ltrs else figs.index(letter)
         # first XOR the letter with the chi wheels, then with the psi wheels
-
-        if letter in ltrs: letterCode = ltrs.index(letter)
-        else: letterCode = figs.index(letter)
         encryptedLetter = letterCode ^ chiCode ^ psiCode
 
-        chi2Back = chi[1][(chiPos[1] - 1) % len(chi[1])]
         # calculate the limitation
         basicMotor = motor[1][motorPos[1]]
-        if limitationSetting == "chi2":
-            limitation = chi2Back
-        elif limitationSetting == "psi1":
-            limitation = chi2Back ^ psi[0][(psiPos[0] - 1) % len(psi[0])]
+        if lim == "chi2":
+            limitation = chi[1][(chiPos[1] - 1) % len(chi[1])]
+        elif lim == "psi1":
+            limitation = chi[1][(chiPos[1] - 1) % len(chi(1))] ^ psi[0][(psiPos[0] - 1) % len(psi[0])]
         else: limitation = True
         totalMotor = basicMotor or not limitation
 
         # advance chi wheels
-        # the index will be decremented
         for i in range(5): chiPos[i] = (chiPos[i] + 1) % len(chi[i])
 
         # advance the motor wheels
@@ -65,7 +62,6 @@ def sz42(plaintext, key, limitationSetting = "none"):
             shift = True
         if shift: cipherText += figs[code]
         else: cipherText += ltrs[code]
-
     return cipherText
 
 key1 = """00011110000110000101100100110101101011110
